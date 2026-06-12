@@ -95,6 +95,29 @@ function wt_help()              { WalletTracker.showHelp(); }</pre>
       </section>
 
       <section>
+        <h3>Getting updates</h3>
+        <p>The library is versioned. How you receive updates depends on how you installed it.</p>
+
+        <h4>If you used Option A (copied the Sheet)</h4>
+        <p>Your copy has a fixed library version from the day you made the copy. You do <strong>not</strong> get updates automatically. To update manually:</p>
+        <ol>
+          <li>Open your Sheet → <strong>Extensions → Apps Script</strong></li>
+          <li>Left sidebar → <strong>Libraries</strong> → click <strong>WalletTracker</strong></li>
+          <li>Change the <strong>Version</strong> dropdown to the highest available number</li>
+          <li>Click <strong>Save</strong> → close the tab → refresh your Sheet</li>
+        </ol>
+
+        <h4>If you used Option B (added the library manually)</h4>
+        <p>Same steps as above. Alternatively, set Version to <strong>HEAD (development mode)</strong> to always receive the latest deploy automatically — no manual steps needed.</p>
+        <div class="callout">
+          ⚠️ <strong>HEAD means instant updates.</strong> If a broken version is ever deployed, your Sheet will break until it is fixed. A fixed version number is safer if you need stability.
+        </div>
+
+        <h4>How to know a new version is available</h4>
+        <p>Open the Version dropdown in Apps Script — if a higher number exists than what you have selected, an update is available. Release notes are posted on <a href="https://github.com/buildbyravi/wallet-tracker-docs/releases" target="_blank" rel="noopener">GitHub Releases</a>.</p>
+      </section>
+
+      <section>
         <h3>Common Issues</h3>
 
         <h4>❌ ReferenceError: WalletTracker is not defined</h4>
