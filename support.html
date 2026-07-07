@@ -18,7 +18,6 @@
   <nav class="site-nav">
     <div class="container">
       <a href="/">Home</a>
-      <a href="/guide.html">📖 Setup Guide</a>
       <a href="/privacy.html">Privacy Policy</a>
       <a href="/terms.html">Terms of Service</a>
       <a href="/support.html" class="active">Support</a>
@@ -28,11 +27,7 @@
   <main>
     <div class="content-wrap">
       <h2>Support &amp; Help</h2>
-      <p class="meta">Last updated: June 14, 2026</p>
-
-      <div class="callout" style="margin-bottom:2rem;">
-        🆕 <strong>New here?</strong> The <a href="/guide.html"><strong>Setup Guide</strong></a> is easier to follow for first-time setup — it explains every step with plain-English explanations of any jargon. Come back here if you run into errors.
-      </div>
+      <p class="meta">Last updated: July 7, 2026 — v9</p>
 
       <section>
         <h3>Quick Start — Option A (easiest)</h3>
@@ -40,12 +35,13 @@
           <li>Click <a href="https://docs.google.com/spreadsheets/d/11YwHYTmbF3H_wpLuxhgov8Bd1C6NJpkPHRivRFeWsCc/copy" target="_blank" rel="noopener"><strong>Make a Copy</strong></a> — the Sheet and script wrapper come with it</li>
           <li>Refresh the sheet — the <strong>⚡ Balances</strong> menu appears</li>
           <li>Run <strong>⚡ Balances → Setup / Create Dashboard</strong> once</li>
-          <li>Run <strong>⚡ Balances → Add chain sheet</strong> — give it a name like <em>Ethereum</em></li>
-          <li>In cell B2, paste your RPC URL (free from chainlist.org)</li>
-          <li>In cell C1, type your coin name e.g. <code>ETH</code> — leave C2 blank</li>
-          <li>Paste wallet addresses in column B from row 3 downward</li>
+          <li>Run <strong>⚡ Balances → Add chain sheet</strong> — give it a name like <em>Ethereum</em>, then paste an RPC URL when prompted</li>
+          <li>Replace the sample rows in column B with your real wallet addresses</li>
           <li>Click <strong>⚡ Balances → Fetch this sheet</strong></li>
         </ol>
+        <div class="callout">
+          💡 Column A (Sr No) fills in automatically after your first fetch — you never need to type row numbers yourself.
+        </div>
       </section>
 
       <section>
@@ -56,8 +52,10 @@
             <code style="word-break:break-all;">1yM1l94RPOknc3QMz7l4eRnNRHRFR0vow0sIEmYBh22nZ_kUBbfreBee1</code>
           </li>
           <li>Click <strong>Look up</strong> → set Identifier to exactly <code>WalletTracker</code> → click <strong>Add</strong></li>
-          <li>Replace everything in <strong>Code.gs</strong> with this block:
-<pre style="background:#f8f9fa;padding:1rem;border-radius:8px;font-size:12px;overflow-x:auto;margin-top:0.5rem;">function onOpen()                { WalletTracker.registerMenu(); }
+          <li>Replace everything in <strong>Code.gs</strong> with this block (use the Copy button — don't retype it):
+            <div class="code-block-wrap">
+              <button class="code-copy-btn" id="codeGsCopyBtn" onclick="copyCodeGs()">Copy</button>
+              <pre id="codeGsBlock" style="background:#f8f9fa;padding:1rem;border-radius:8px;font-size:12px;overflow-x:auto;margin-top:0.5rem;">function onOpen()                { WalletTracker.registerMenu(); }
 function onInstall()             { WalletTracker.registerMenu(); }
 function wt_fetchCurrentSheet()  { WalletTracker.fetchCurrentSheetAllChains(); }
 function wt_fetchAllSheets()     { WalletTracker.fetchAllSheetsAllChains(); }
@@ -68,11 +66,14 @@ function wt_triggerFetch()       { WalletTracker.triggerFetch(); }
 function wt_setupDashboard()     { WalletTracker.setupDashboard(); }
 function wt_addWalletSheet()     { WalletTracker.addWalletSheet(); }
 function wt_addTokenColumn()     { WalletTracker.addTokenColumn(); }
-function wt_clearDecimalsCache() { WalletTracker.clearDecimalsCache(); }
 function wt_setFallbackRpc()     { WalletTracker.setFallbackRpc(); }
 function wt_refreshPortfolio()   { WalletTracker.refreshDashboardSummary(); }
+function wt_clearDecimalsCache() { WalletTracker.clearDecimalsCache(); }
+function wt_setDustThreshold()   { WalletTracker.setDustThreshold(); }
+function wt_clearSheetBatch()    { WalletTracker.clearSheetBatch(); }
 function wt_clearAllCache()      { WalletTracker.clearAllCache(); }
 function wt_help()               { WalletTracker.showHelp(); }</pre>
+            </div>
           </li>
           <li>Press <strong>Ctrl+S</strong> → close the tab → refresh your sheet → <strong>⚡ Balances</strong> menu appears</li>
         </ol>
@@ -80,28 +81,49 @@ function wt_help()               { WalletTracker.showHelp(); }</pre>
           ⚠️ The identifier <strong>must</strong> be <code>WalletTracker</code> exactly — wrong capitalisation causes a ReferenceError.
         </div>
         <div class="callout">
-          ⚠️ <code>wt_triggerFetch</code> is not in the menu but must exist in Code.gs — it is the background auto-fetch trigger target.
+          ⚠️ <code>wt_triggerFetch</code> is not in the menu but must exist in Code.gs — it is the background auto-fetch trigger target. Without it, auto-fetch installs but silently does nothing.
         </div>
       </section>
 
       <section>
-        <h3>Sheet layout (v8)</h3>
+        <h3>Sheet layout (v9)</h3>
         <ul>
           <li><strong>B2</strong> — RPC URL for this chain (e.g. <code>https://eth.llamarpc.com</code>)</li>
           <li><strong>Row 1 col C+</strong> — column header: coin or token name (e.g. <code>ETH</code>, <code>USDC</code>)</li>
           <li><strong>Row 2 col C</strong> — leave <strong>blank</strong> → fetches native coin balance</li>
           <li><strong>Row 2 col D+</strong> — paste a contract address → fetches ERC-20 token balance</li>
+          <li><strong>Col A row 3+</strong> — Sr No, auto-filled after each fetch — leave it alone</li>
           <li><strong>Col B row 3+</strong> — wallet addresses (0x…, exactly 42 characters)</li>
+          <li><strong>Cell A2</strong> — optional minimum balance filter (see below)</li>
         </ul>
-        <p>To add a token column: <strong>⚡ Balances → Add ERC-20 token</strong> — enter the ticker and contract address. The column is created automatically.</p>
+        <p>To add a token column: <strong>⚡ Balances → Add ERC-20 token</strong> — enter the ticker and contract address. If the contract has an on-chain name that differs from what you typed, you'll be asked whether to use the contract's official name instead.</p>
         <div class="callout">
           ⚠️ You only need <strong>public wallet addresses</strong> (0x…). Never enter private keys or seed phrases.
         </div>
       </section>
 
       <section>
+        <h3>Duplicate &amp; invalid addresses</h3>
+        <p>The tracker checks column B every time you fetch:</p>
+        <ul>
+          <li><strong>Duplicate addresses</strong> — if the same address appears more than once on a sheet, every copy is still fetched (so nothing goes unfetched), but you'll get a toast listing the row numbers. Duplicates are counted once per occurrence in your chain sheet totals and in Portfolio, so remove them if you want accurate totals.</li>
+          <li><strong>Invalid addresses</strong> — anything that starts with <code>0x</code> but isn't exactly 42 valid hex characters gets marked <strong>INVALID</strong> in amber and is skipped during fetch. Plain text that doesn't start with <code>0x</code> (like blank rows or notes) is ignored silently — it's never flagged.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Minimum balance filter (dust filter)</h3>
+        <p>If you're tracking hundreds of wallets and only care about ones holding a meaningful balance, set a floor:</p>
+        <ol>
+          <li>Run <strong>⚡ Balances → Set min balance filter</strong></li>
+          <li>Enter a number — e.g. <code>0.01</code> — or leave it blank to turn the filter off</li>
+          <li>Rows with a native balance below your threshold are dimmed (not deleted, not hidden) so they're easy to visually skip</li>
+        </ol>
+        <p>The current setting is shown in cell A2 of the chain sheet. Clearing the filter un-dims everything immediately.</p>
+      </section>
+
+      <section>
         <h3>ERC-20 token tracking</h3>
-        <p>v8 adds full ERC-20 support. To track tokens like USDC, USDT, WETH, or any ERC-20:</p>
         <ol>
           <li>Go to the chain sheet where you want the token</li>
           <li>Run <strong>⚡ Balances → Add ERC-20 token</strong></li>
@@ -110,53 +132,58 @@ function wt_help()               { WalletTracker.showHelp(); }</pre>
           <li>Run <strong>⚡ Balances → Fetch this sheet</strong></li>
         </ol>
         <div class="callout">
-          💡 Token decimals are fetched automatically on first run and cached. If you ever see wrong decimal places, run <strong>⚡ Balances → Clear decimals cache</strong> and re-fetch.
+          💡 Token decimals are fetched automatically on first run and cached per chain — the same contract address on two different chains is cached separately, so decimals never leak across chains. If you ever see wrong decimal places, run <strong>⚡ Balances → Clear decimals cache</strong> and re-fetch.
         </div>
         <p>Where to find contract addresses: <a href="https://etherscan.io" target="_blank" rel="noopener">Etherscan</a> (search the token name → copy the Contract field) or <a href="https://coingecko.com" target="_blank" rel="noopener">CoinGecko</a> (token page → Contract tab).</p>
       </section>
 
       <section>
         <h3>Portfolio summary</h3>
-        <p>Run <strong>⚡ Balances → Refresh Portfolio</strong> to create a PORTFOLIO sheet with live SUMIF totals across all your chain sheets and token columns. The formulas update automatically every time you fetch balances — no manual refresh needed. Re-run this menu item after adding or removing chain sheets or token columns.</p>
+        <p>Run <strong>⚡ Balances → Refresh Portfolio</strong> to create a PORTFOLIO sheet with live totals across all your chain sheets and token columns. It also rebuilds automatically the moment a full fetch completes on any chain sheet — no manual refresh needed in normal use.</p>
+        <p>The Wallets column counts only addresses that exactly match the 42-character format the tracker actually fetches — it does not count malformed or placeholder text, so the number always reconciles with what's really being queried on-chain.</p>
       </section>
 
       <section>
         <h3>Balance change tracking</h3>
-        <p>After each fetch, hover any balance cell to see a tooltip showing the change since the last run — for example <em>↑ +1.234500 (prev: 0.000000)</em>. This lets you spot activity across wallets at a glance without exporting data.</p>
+        <p>After each fetch, hover any balance cell to see a tooltip showing the change since the last run — for example <em>↑ +1.234500 (prev: 0.000000)</em>.</p>
       </section>
 
       <section>
         <h3>Fallback RPC</h3>
-        <p>If your primary RPC (cell B2) starts failing on many wallets, you can set a backup. Run <strong>⚡ Balances → Set fallback RPC</strong> and paste a second RPC URL. When more than half a batch returns errors from the primary RPC, failed wallets are automatically retried against the fallback.</p>
+        <p>Run <strong>⚡ Balances → Set fallback RPC</strong> and paste a second RPC URL. When more than half a batch returns errors from the primary RPC, failed wallets are automatically retried against the fallback.</p>
       </section>
 
       <section>
         <h3>Large wallet lists — batch mode</h3>
-        <p>Google Apps Script has a 6-minute execution limit. The tracker handles this automatically:</p>
+        <p>Google Apps Script has a 6-minute execution limit. The tracker handles this automatically by batching, with batch sizes tuned differently for native coin balances versus ERC-20 tokens (native balances can be checked in much larger batches per run than tokens):</p>
         <ul>
-          <li><strong>Native balances:</strong> up to 500 wallets per run using JSON-RPC batch requests (all 500 sent in a few HTTP calls)</li>
-          <li><strong>ERC-20 token balances:</strong> up to 50 wallets per run (sequential eth_call — one call per wallet)</li>
           <li>Cells that haven't been fetched yet show <code>—</code> so you can see what's pending</li>
           <li>Re-run <strong>Fetch this sheet</strong> to continue — it always picks up from where it stopped</li>
+          <li>A single bad network response no longer discards an entire batch's worth of already-fetched results — only the wallets actually affected are retried</li>
         </ul>
         <div class="callout">
-          💡 For lists over 500 wallets, use <strong>⚡ Balances → Start auto-fetch</strong>. This installs a background trigger that runs every minute and stops itself when all wallets are done. No babysitting needed.
+          💡 For very large lists, use <strong>⚡ Balances → Start auto-fetch</strong>. This installs a background trigger that runs every minute and stops itself when all wallets are done.
         </div>
       </section>
 
       <section>
-        <h3>Auto-fetch (500+ wallets)</h3>
+        <h3>Auto-fetch (large lists)</h3>
         <ol>
           <li>Set up your chain sheet with RPC URL and wallet addresses</li>
           <li>Run <strong>⚡ Balances → Start auto-fetch</strong></li>
           <li>Google will ask for permission to run background triggers — click Allow</li>
-          <li>The tracker fetches batches every minute in the background</li>
-          <li>It stops itself automatically when all wallets are done</li>
+          <li>The tracker fetches batches every minute in the background and stops itself automatically when done</li>
           <li>To stop early: <strong>⚡ Balances → Stop auto-fetch</strong></li>
         </ol>
-        <div class="callout">
-          ⚠️ Auto-fetch requires the <code>wt_triggerFetch</code> wrapper in your Code.gs. If you copied the 16 wrappers above, it is already there. Without it, the trigger fires but nothing runs.
-        </div>
+      </section>
+
+      <section>
+        <h3>Resetting a stuck sheet</h3>
+        <p>If one sheet's batch progress looks stuck or wrong, you don't need to reset everything:</p>
+        <ul>
+          <li><strong>⚡ Balances → Clear stuck batch</strong> — resets only the active sheet's saved batch position, without touching decimals cache, fallback RPC, or any other sheet</li>
+          <li><strong>⚡ Balances → Clear ALL cache</strong> — full reset across every sheet; use this only if the targeted reset above doesn't help</li>
+        </ul>
       </section>
 
       <section>
@@ -164,13 +191,13 @@ function wt_help()               { WalletTracker.showHelp(); }</pre>
         <p>The library is versioned. How you receive updates depends on how you installed it.</p>
 
         <h4>If you used Option A (copied the Sheet)</h4>
-        <p>Your copy has a fixed library version from the day you made the copy. You do <strong>not</strong> get updates automatically. To update manually:</p>
+        <p>Your copy has a fixed library version from the day you made the copy. To update manually:</p>
         <ol>
           <li>Open your Sheet → <strong>Extensions → Apps Script</strong></li>
           <li>Left sidebar → <strong>Libraries</strong> → click <strong>WalletTracker</strong></li>
           <li>Change the <strong>Version</strong> dropdown to the highest available number</li>
           <li>Click <strong>Save</strong> → close the tab → refresh your Sheet</li>
-          <li>Replace Code.gs with the new 16-wrapper block (see Option B setup above)</li>
+          <li>Replace Code.gs with the current wrapper block (see Option B setup above)</li>
         </ol>
 
         <h4>If you used Option B (added the library manually)</h4>
@@ -206,23 +233,34 @@ function wt_help()               { WalletTracker.showHelp(); }</pre>
           <li>Verify the contract address in row 2 matches the correct chain</li>
         </ul>
 
+        <h4>❌ A row shows "INVALID" and I didn't type anything wrong</h4>
+        <ul>
+          <li>Check for extra spaces, a missing character, or a wrong length in that address — anything starting with <code>0x</code> that isn't exactly 42 characters gets flagged</li>
+          <li>Placeholder text that doesn't start with <code>0x</code> is never flagged, so this only appears on genuine near-miss addresses</li>
+        </ul>
+
+        <h4>❌ Portfolio numbers look off</h4>
+        <ul>
+          <li>Duplicate wallet addresses on the same sheet are fetched and counted per occurrence — remove duplicates if you want a strict unique count</li>
+          <li>The Wallets column only counts exact 42-character addresses, so malformed or placeholder rows are correctly excluded</li>
+        </ul>
+
         <h4>❌ Auto-fetch installed but nothing happens</h4>
         <ul>
           <li>Check Code.gs has the <code>wt_triggerFetch</code> wrapper — it is required</li>
           <li>In Apps Script → Triggers — verify a trigger for <code>wt_triggerFetch</code> exists</li>
-          <li>Try <strong>⚡ Balances → Clear ALL cache</strong> then <strong>Start auto-fetch</strong> again</li>
         </ul>
 
         <h4>❌ Tracker seems stuck or looping</h4>
         <ul>
-          <li>Run <strong>⚡ Balances → Clear ALL cache</strong> — this safely resets all saved state without touching your wallet data or balances</li>
-          <li>Then re-run Fetch or Start auto-fetch</li>
+          <li>Try <strong>⚡ Balances → Clear stuck batch</strong> first — it only resets the active sheet</li>
+          <li>If that doesn't help, <strong>⚡ Balances → Clear ALL cache</strong> then re-run Fetch or Start auto-fetch</li>
         </ul>
 
         <h4>❌ No "⚡ Balances" menu</h4>
         <ul>
           <li>Refresh the sheet — the menu only appears after a full page reload</li>
-          <li>Check Code.gs has all 16 wrapper functions</li>
+          <li>Check Code.gs has all 18 wrapper functions</li>
           <li>Run <code>onOpen</code> manually from the Apps Script editor once</li>
         </ul>
       </section>
@@ -234,13 +272,13 @@ function wt_help()               { WalletTracker.showHelp(); }</pre>
         <p>No. Everything stays in your Google Sheet and your Google account's Apps Script properties. We operate no servers that receive or log your wallet data.</p>
 
         <h4>Which blockchains are supported?</h4>
-        <p>Any EVM-compatible chain with a public RPC — Ethereum, Polygon, BSC, Arbitrum, Optimism, Avalanche, Base, and hundreds more. You configure the RPC, so you control which chains you query.</p>
+        <p>Any EVM-compatible chain with a public RPC — Ethereum, Polygon, BSC, Arbitrum, Optimism, Avalanche, Base, and hundreds more.</p>
 
         <h4>Which tokens are supported?</h4>
-        <p>Any ERC-20 token on any EVM chain. You need the token's contract address on the specific chain you're tracking. Find it on Etherscan, BscScan, or CoinGecko.</p>
+        <p>Any ERC-20 token on any EVM chain, given its contract address on that specific chain.</p>
 
-        <h4>What balances does it show?</h4>
-        <p>Native coin balances (ETH, BNB, MATIC, etc.) and any ERC-20 token balances you configure. NFT balances are not supported.</p>
+        <h4>Can I ignore wallets with tiny/dust balances?</h4>
+        <p>Yes — <strong>⚡ Balances → Set min balance filter</strong> dims any wallet below a threshold you choose.</p>
 
         <h4>Do I need a paid RPC?</h4>
         <p>No. Free public RPCs work for personal use. For 100+ wallets, ERC-20 tokens, or frequent refreshes, a free Alchemy or Infura account gives you higher rate limits and better reliability.</p>
@@ -300,7 +338,7 @@ function wt_help()               { WalletTracker.showHelp(); }</pre>
           <li>Open your Google Sheet → <strong>Extensions → Apps Script</strong></li>
           <li>Left sidebar → <strong>Libraries</strong> → click <strong>WalletTracker</strong></li>
           <li>Click <strong>Remove</strong></li>
-          <li>Delete all 16 wrapper functions from your Code.gs</li>
+          <li>Delete all 18 wrapper functions from your Code.gs</li>
           <li>Save — the ⚡ Balances menu disappears on next reload</li>
         </ol>
       </section>
@@ -321,5 +359,20 @@ function wt_help()               { WalletTracker.showHelp(); }</pre>
   </footer>
 
   <script type="module" src="/src/analytics.js"></script>
+  <script>
+    function copyCodeGs() {
+      var code = document.getElementById('codeGsBlock').innerText;
+      var btn  = document.getElementById('codeGsCopyBtn');
+      navigator.clipboard.writeText(code).then(function() {
+        var orig = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('copied');
+        setTimeout(function() {
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    }
+  </script>
 </body>
 </html>
